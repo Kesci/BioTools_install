@@ -16,7 +16,7 @@ RUN cd /opt/tools \
 ENV PATH=$PATH:/opt/tools/sratoolkit.2.11.3-ubuntu64/bin
 
 RUN cd /opt/tools \
-    && wget https://file-1258430491.cos.ap-shanghai.myqcloud.com/fastqc_v0.11.5.zip\
+    && wget https://file-1258430491.cos.ap-shanghai.myqcloud.com/fastqc_v0.11.5.zip \
     && unzip fastqc_v0.11.5.zip \
     && rm fastqc_v0.11.5.zip
 
@@ -24,7 +24,7 @@ ENV PATH=$PATH:/opt/tools/FastQC
 
 RUN cd /opt/tools \
     && wget https://github.com/torognes/vsearch/releases/download/v2.19.0/vsearch-2.19.0-linux-x86_64.tar.gz \
-    && tar xzf vsearch-2.19.0-linux-x86_64.tar.gz
+    && tar xzf vsearch-2.19.0-linux-x86_64.tar.gz \
     && rm vsearch-2.19.0-linux-x86_64.tar.gz
 
 RUN cd /opt \
@@ -124,3 +124,6 @@ RUN cd /opt/packages \
     && echo "BiocManager::install(\"phyloseq\")" >> install.R \
     && sed -i '$a BiocManager::install("MicrobiotaProcess")' install.R \
     && R CMD BATCH --no-save --no-restore install.R
+
+
+811938384917.dkr.ecr.cn-northwest-1.amazonaws.com.cn/kcr/kesci_kernel_lab:datascience-r-4.1.1
