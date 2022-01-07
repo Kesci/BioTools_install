@@ -54,6 +54,34 @@ RUN cd /opt/packages \
     && R CMD INSTALL ggplot2_3.3.4.tar.gz
 
 RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/ggrepel/ggrepel_0.9.0.tar.gz \
+    && R CMD INSTALL ggrepel_0.9.0.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/cowplot/cowplot_1.1.0.tar.gz \
+    && R CMD INSTALL cowplot_1.1.0.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/cowplot/cowplot_1.1.0.tar.gz \
+    && R CMD INSTALL cowplot_1.1.0.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/ggsignif/ggsignif_0.6.2.tar.gz \
+    && R CMD INSTALL ggsignif_0.6.2.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_2.2.1.tar.gz \
+    && R CMD INSTALL gridExtra_2.2.1.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/polynom/polynom_1.3-9.tar.gz \
+    && R CMD INSTALL polynom_1.3-9.tar.gz
+
+RUN cd /opt/packages \
+    && wget https://cran.r-project.org/src/contrib/Archive/rstatix/rstatix_0.6.0.tar.gz \
+    && R CMD INSTALL rstatix_0.6.0.tar.gz
+
+RUN cd /opt/packages \
     && wget https://cran.r-project.org/src/contrib/Archive/ggpubr/ggpubr_0.3.0.tar.gz \
     && R CMD INSTALL ggpubr_0.3.0.tar.gz
 
