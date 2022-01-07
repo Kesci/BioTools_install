@@ -124,12 +124,3 @@ RUN cd /opt/packages \
     && echo "BiocManager::install(\"phyloseq\")" >> install.R \
     && sed -i '$a BiocManager::install("MicrobiotaProcess")' install.R \
     && R CMD BATCH --no-save --no-restore install.R
-
-
-
-
-
-
-
-
-library(phyloseq)
