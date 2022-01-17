@@ -1,129 +1,81 @@
-FROM ubuntu:latest
+FROM 811938384917.dkr.ecr.cn-northwest-1.amazonaws.com.cn/kcr/kesci_kernel_lab:datascience-r-4.1.1
 
 MAINTAINER Widget_An <anchunyu@heywhale.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Shanghai
 
-RUN apt-get update && apt-get -y upgrade && apt-get autoremove && apt-get autoclean
-RUN apt-get install -y wget openjdk-17-jdk && cd /opt && mkdir tools
+COPY sources.list /etc/apt/
 
-RUN cd /opt/tools \
+RUN apt-get update && apt-get -y upgrade && apt-get autoremove && apt-get autoclean
+RUN apt-get install -y apt-utils libharfbuzz-dev libfribidi-dev libfreetype6-dev wget openjdk-17-jdk libexpat-dev sqlite3 libsqlite3-dev cargo libpq-dev libmariadbclient-dev file
+
+RUN R -e "install.packages(c('gifski'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
+
+RUN cd /opt && mkdir tools && cd /opt/tools \
     && wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz \
     && tar -xvzf sratoolkit.2.11.3-ubuntu64.tar.gz \
     && rm sratoolkit.2.11.3-ubuntu64.tar.gz
-
-ENV PATH=$PATH:/opt/tools/sratoolkit.2.11.3-ubuntu64/bin
 
 RUN cd /opt/tools \
     && wget https://file-1258430491.cos.ap-shanghai.myqcloud.com/fastqc_v0.11.5.zip \
     && unzip fastqc_v0.11.5.zip \
     && rm fastqc_v0.11.5.zip
 
-ENV PATH=$PATH:/opt/tools/FastQC
-
 RUN cd /opt/tools \
     && wget https://github.com/torognes/vsearch/releases/download/v2.19.0/vsearch-2.19.0-linux-x86_64.tar.gz \
     && tar xzf vsearch-2.19.0-linux-x86_64.tar.gz \
     && rm vsearch-2.19.0-linux-x86_64.tar.gz
 
-RUN cd /opt \
-    && mkdir packages \
-    && cd packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/pacman/pacman_0.5.0.tar.gz \
-    && R CMD INSTALL pacman_0.5.0.tar.gz
+RUN conda install -y r-units
+RUN conda install -c conda-forge libgdal jq proj
+RUN conda install -c conda-forge av
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/magrittr/magrittr_1.5.tar.gz \
-    && R CMD INSTALL magrittr_1.5.tar.gz
+RUN R -e "install.packages('udunits2', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/reshape2/reshape2_1.4.tar.gz \
-    && R CMD INSTALL reshape2_1.4.tar.gz
+ARG C_INCLUDE_PATH=/usr/include/freetype2/
+ARG CPLUS_INCLUDE_PATH=/usr/include/freetype2/
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/dplyr/dplyr_1.0.6.tar.gz \
-    && R CMD INSTALL dplyr_1.0.6.tar.gz
+RUN cp /opt/conda/lib/pkgconfig/fontconfig.pc /usr/local/lib/pkgconfig/ && R -e "install.packages('systemfonts', dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggsci/ggsci_2.8.tar.gz \
-    && R CMD INSTALL ggsci_2.8.tar.gz
+RUN R -e "install.packages(c('ggpubr'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_3.3.4.tar.gz \
-    && R CMD INSTALL ggplot2_3.3.4.tar.gz
+RUN R -e "install.packages(c('BiocManager'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggrepel/ggrepel_0.9.0.tar.gz \
-    && R CMD INSTALL ggrepel_0.9.0.tar.gz
+RUN R -e "install.packages(c('TH.data'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/cowplot/cowplot_1.1.0.tar.gz \
-    && R CMD INSTALL cowplot_1.1.0.tar.gz
+RUN R -e "options(BioC_mirror='https://mirrors.tuna.tsinghua.edu.cn/bioconductor'); BiocManager::install(version = '3.14')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/cowplot/cowplot_1.1.0.tar.gz \
-    && R CMD INSTALL cowplot_1.1.0.tar.gz
+RUN R -e "options(BioC_mirror='https://mirrors.tuna.tsinghua.edu.cn/bioconductor'); BiocManager::install(c('MicrobiotaProcess', update = TRUE, dependencies=TRUE))"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggsignif/ggsignif_0.6.2.tar.gz \
-    && R CMD INSTALL ggsignif_0.6.2.tar.gz
+RUN R -e "install.packages(c('jqr'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_2.2.1.tar.gz \
-    && R CMD INSTALL gridExtra_2.2.1.tar.gz
+RUN R -e "install.packages(c('V8'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/polynom/polynom_1.3-9.tar.gz \
-    && R CMD INSTALL polynom_1.3-9.tar.gz
+RUN R -e "install.packages(c('av'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/rstatix/rstatix_0.6.0.tar.gz \
-    && R CMD INSTALL rstatix_0.6.0.tar.gz
+RUN R -e "install.packages(c('textshaping'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggpubr/ggpubr_0.3.0.tar.gz \
-    && R CMD INSTALL ggpubr_0.3.0.tar.gz
+RUN cd /opt && cd tools && wget https://mirrors.tuna.tsinghua.edu.cn/CRAN/src/contrib/ragg_1.2.1.tar.gz && R CMD INSTALL ragg_1.2.1.tar.gz --configure-vars='INCLUDE_DIR=/usr/include/freetype2/  LIB_DIR=/opt/conda/lib/'
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/patchwork/patchwork_1.1.0.tar.gz \
-    && R CMD INSTALL patchwork_1.1.0.tar.gz
+RUN R -e "install.packages(c('lwgeom'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN', configure.args='--with-proj-include=/opt/conda/include/ --with-proj-lib=/opt/conda/lib/')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/mixOmics/mixOmics_6.3.2.tar.gz \
-    && R CMD INSTALL mixOmics_6.3.2.tar.gz
+RUN R -e "install.packages(c('ggplot2'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/tidyverse/tidyverse_1.3.0.tar.gz \
-    && R CMD INSTALL tidyverse_1.3.0.tar.gz
+RUN R -e " install.packages(c('Lahman'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/openxlsx/openxlsx_4.2.4.tar.gz \
-    && R CMD INSTALL openxlsx_4.2.4.tar.gz
+RUN R -e " install.packages(c('pacman'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/vegan/vegan_2.5-6.tar.gz \
-    && R CMD INSTALL vegan_2.5-6.tar.gz
+RUN R -e " install.packages(c('magrittr'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/scales/scales_1.1.0.tar.gz \
-    && R CMD INSTALL scales_1.1.0.tar.gz
+RUN R -e " install.packages(c('reshape2'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggh4x/ggh4x_0.2.0.tar.gz \
-    && R CMD INSTALL ggh4x_0.2.0.tar.gz
+RUN R -e " install.packages(c('dplyr'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/ggvenn/ggvenn_0.1.8.tar.gz \
-    && R CMD INSTALL ggvenn_0.1.8.tar.gz
-    
-RUN cd /opt/packages \
-    && wget https://cran.r-project.org/src/contrib/Archive/BiocManager/BiocManager_1.30.15.tar.gz \
-    && R CMD INSTALL BiocManager_1.30.15.tar.gz \
-    && touch install.R \
-    && echo "BiocManager::install(\"phyloseq\")" >> install.R \
-    && sed -i '$a BiocManager::install("MicrobiotaProcess")' install.R \
-    && R CMD BATCH --no-save --no-restore install.R
+RUN R -e "install.packages(c('tidyverse'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
+RUN R -e "options(BioC_mirror='https://mirrors.tuna.tsinghua.edu.cn/bioconductor'); BiocManager::install(c('mixOmics'), update = TRUE, dependencies=TRUE)"
 
-811938384917.dkr.ecr.cn-northwest-1.amazonaws.com.cn/kcr/kesci_kernel_lab:datascience-r-4.1.1
+RUN R -e "options(BioC_mirror='https://mirrors.tuna.tsinghua.edu.cn/bioconductor'); BiocManager::install(c('phyloseq'), update = TRUE, dependencies=TRUE)"
+
+RUN R -e "install.packages(c('ggsci', 'patchwork', 'openxlsx', 'vegan', 'scales', 'ggh4x', 'ggvenn'), dependencies=TRUE, repos='http://cran.rstudio.com/')"
