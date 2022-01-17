@@ -27,6 +27,8 @@ RUN cd /opt/tools \
     && tar xzf vsearch-2.19.0-linux-x86_64.tar.gz \
     && rm vsearch-2.19.0-linux-x86_64.tar.gz
 
+RUN chmod -R 777 /opt/tools
+
 RUN conda install -y r-units
 RUN conda install -c conda-forge libgdal jq proj
 RUN conda install -c conda-forge av
