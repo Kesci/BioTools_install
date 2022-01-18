@@ -10,6 +10,10 @@ COPY sources.list /etc/apt/
 RUN apt-get update && apt-get -y upgrade && apt-get autoremove && apt-get autoclean
 RUN apt-get install -y apt-utils libharfbuzz-dev libfribidi-dev libfreetype6-dev wget openjdk-17-jdk libexpat-dev sqlite3 libsqlite3-dev cargo libpq-dev libmariadbclient-dev file
 
+RUN cd /home/mw && mkdir .cargo
+
+COPY config /home/mw/.cargo/
+
 RUN R -e "install.packages(c('gifski'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
 RUN cd /opt && mkdir tools && cd /opt/tools \
