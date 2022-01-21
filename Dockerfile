@@ -8,7 +8,7 @@ ENV TZ=Asia/Shanghai
 COPY sources.list /etc/apt/
 
 RUN apt-get update && apt-get -y upgrade && apt-get autoremove && apt-get autoclean
-RUN apt-get install -y apt-utils libharfbuzz-dev libfribidi-dev libfreetype6-dev wget openjdk-17-jdk libexpat-dev sqlite3 libsqlite3-dev cargo libpq-dev libmariadbclient-dev file
+RUN apt-get install -y apt-utils libharfbuzz-dev libfribidi-dev libfreetype6-dev wget openjdk-17-jdk libexpat-dev sqlite3 libsqlite3-dev cargo libpq-dev libmariadbclient-dev file libssl-dev libproj-dev
 
 RUN cd /home/mw && mkdir .cargo
 
