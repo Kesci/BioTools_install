@@ -64,7 +64,7 @@ RUN R -e "install.packages(c('textshaping'), dependencies=TRUE, repos='https://m
 
 RUN cd /opt && cd tools && wget https://mirrors.tuna.tsinghua.edu.cn/CRAN/src/contrib/ragg_1.2.1.tar.gz && R CMD INSTALL ragg_1.2.1.tar.gz --configure-vars='INCLUDE_DIR=/usr/include/freetype2/  LIB_DIR=/opt/conda/lib/'
 
-RUN R -e "install.packages(c('lwgeom'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN', configure.args='--with-proj-include=/opt/conda/include/ --with-proj-lib=/opt/conda/lib/')"
+RUN cp -r /usr/include/openssl/ /opt/conda/x86_64-conda-linux-gnu/sysroot/usr/include/ && R -e "install.packages(c('lwgeom'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN', configure.args='--with-proj-include=/opt/conda/include/ --with-proj-lib=/opt/conda/lib/')"
 
 RUN R -e "install.packages(c('ggplot2'), dependencies=TRUE, repos='https://mirrors.tuna.tsinghua.edu.cn/CRAN')"
 
